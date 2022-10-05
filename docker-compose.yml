@@ -1,0 +1,39 @@
+#versão do composer que vai ser utilizada no projeto
+version: '3.9'
+
+#informar quais serviços serão criados
+services:
+    database:
+        image: postgres
+        container_name: database_rentalx_dev
+        restart: always
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_USER=docker
+            - POSTGRES_PASSWORD=123456
+            - POSTGRES_DB=rentalx_dev
+        volumes:
+            - pgdata:/data/postgres
+
+    #nome do meu serviço
+    app:
+        #construir o projeto a partir do diretório raiz
+        build: .
+        #nome do container
+        container_name: rentalx_dev
+        #portas
+        ports:
+            - 3333:3333
+        #criar o diretório de trabalho, onde . é o local de onde vamos copiar os arquivos do projeto e /usr/app é o local remoto pra onde vão os arquivos copiados.
+        volumes:
+            - .:/usr/app
+        links:
+            - database
+        depends_on:
+            - database
+        
+
+volumes:
+    pgdata:
+        driver: local
